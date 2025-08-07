@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer(column: 'blank_votes')->default(value: 0);
             $table->string(column: 'act_path')->nullable();
             $table->foreignId(column: 'registered_by')->constrained('users')->onDelete('cascade');
-            $table->timestamps('registered_at');
+            $table->timestamp('registered_at');
             $table->timestamps();
         });
     }

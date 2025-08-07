@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->enum('role', allowed: ['ADMIN', 'USER'])->default('USER');
-            $table->foreignId(column: 'precinct_id')->constrained('precincts')->onDelete('cascade');
+            $table->foreignId(column: 'precinct_id')->nullable()->constrained('precincts')->onDelete('cascade');
         });
     }
 
