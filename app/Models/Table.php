@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Table extends Model
 {
+    protected $guarded = [];
+
     /**
      * @return BelongsTo<Precinct,Table>
      */

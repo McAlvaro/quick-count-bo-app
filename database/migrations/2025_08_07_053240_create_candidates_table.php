@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('candidates', function (Blueprint $table) {
             $table->id();
             $table->string(column: 'name');
-            $table->enum(column: 'type', allowed: ['PRESIDENT', 'DEPUTY']);
+            $table->enum(column: 'type', allowed: ['PRESIDENTE', 'DIPUTADO', 'DIPUTADO_ESPECIAL']);
             $table->foreignId(column: 'party_id')->constrained('parties')->onDelete('cascade');
             $table->timestamps();
         });

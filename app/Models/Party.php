@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Party extends Model
 {
+    protected $guarded = [];
+
     public function candidates(): HasMany
     {
         return $this->hasMany(Candidate::class);

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Precinct extends Model
 {
+    protected $guarded = [];
+
     /**
      * @return HasMany<Table,Precinct>
      */
