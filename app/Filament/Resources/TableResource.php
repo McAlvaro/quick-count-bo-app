@@ -93,22 +93,12 @@ class TableResource extends Resource
 
                     ])->columnSpan(2),
 
-                TextInput::make(name: 'null_votes')
-                    ->numeric()
-                    ->required()
-                    ->label(label: 'Nulos'),
-
-                TextInput::make(name: 'blank_votes')
-                    ->numeric()
-                    ->required()
-                    ->label(label: 'Blancos'),
-
             ]);
     }
 
     public static function table(Table $table): Table
     {
-        $parties = Party::orderBy('name')->get();
+        $parties = Party::orderBy('created_at')->get();
 
         $columns = [
             TextColumn::make('precinct.name')
@@ -151,9 +141,6 @@ class TableResource extends Resource
                 ->sortable(false)
                 ->extraAttributes(['class' => 'text-left']);
         }
-        $columns[] = TextColumn::make('null_votes')->label('Nulos');
-        $columns[] = TextColumn::make('blank_votes')->label('Blancos');
-
 
         return $table
             ->columns($columns)
