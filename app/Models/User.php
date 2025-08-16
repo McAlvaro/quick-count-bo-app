@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -79,5 +81,16 @@ class User extends Authenticatable
     public function precincts(): BelongsToMany
     {
         return $this->belongsToMany(Precinct::class);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Solo los usuarios con rol super_admin pueden acceder al panel de Filament
+        if ($panel->getId() === 'admin') {
+            return $this->hasRole('super_admin');
+        }
+
+        // Por defecto: no tiene acceso a ningún otro panel
+        return false;
     }
 }
