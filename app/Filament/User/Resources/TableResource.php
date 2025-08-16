@@ -114,7 +114,7 @@ class TableResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label(label: 'Registrar Voto'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

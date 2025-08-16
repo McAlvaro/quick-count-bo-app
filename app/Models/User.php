@@ -94,6 +94,6 @@ class User extends Authenticatable implements FilamentUser
         }
 
         // Por defecto: no tiene acceso a ningún otro panel
-        return false;
+        return true;
     }
 }
