@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -86,6 +87,7 @@ class User extends Authenticatable
     public function canAccessPanel(Panel $panel): bool
     {
         // Solo los usuarios con rol super_admin pueden acceder al panel de Filament
+        Log::debug('Panel: ' . $panel->getId());
         if ($panel->getId() === 'admin') {
             return $this->hasRole('super_admin');
         }
