@@ -107,7 +107,7 @@ class TableResource extends Resource
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('registered_at')
-                    ->label(label: 'Fecha de Registro')
+                    ->label(label: 'Fecha de Registro'),
 
             ])
             ->filters([
