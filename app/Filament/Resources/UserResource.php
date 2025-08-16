@@ -39,6 +39,12 @@ class UserResource extends Resource
                     ->multiple()
                     ->relationship('roles', 'name') // usa la relación de Spatie
                     ->preload(),
+
+                Forms\Components\Select::make('precincts')
+                    ->label('Asignar Recinto')
+                    ->multiple()
+                    ->relationship('precincts', 'name')
+                    ->preload(),
             ]);
     }
 
@@ -50,6 +56,9 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email'),
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label('Roles')
+                    ->badge(),
+                Tables\Columns\TextColumn::make('precincts.name')
+                    ->label('Recintos')
                     ->badge(),
             ])
             ->filters([
