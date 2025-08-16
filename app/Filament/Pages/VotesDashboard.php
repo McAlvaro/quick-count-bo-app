@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\VoteDeputyEspChart;
 use App\Filament\Widgets\VotesDeputyChart;
 use App\Filament\Widgets\VotesChart;
 use Filament\Pages\Page;
@@ -18,7 +19,8 @@ class VotesDashboard extends Page
     {
         return [
             VotesChart::class,
-            VotesDeputyChart::class
+            VotesDeputyChart::class,
+            VoteDeputyEspChart::class
         ];
     }
 
@@ -26,7 +28,8 @@ class VotesDashboard extends Page
     {
         return [
             VotesChart::class,
-            VotesDeputyChart::class
+            VotesDeputyChart::class,
+            VoteDeputyEspChart::class
         ];
     }
 }
