@@ -3,15 +3,23 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -55,7 +63,34 @@ class User extends Authenticatable
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    /**
+     * @return BelongsTo<Precinct,User>
+     */
+    public function precinct(): BelongsTo
+    {
+        return $this->belongsTo(Precinct::class);
+    }
+
+    /**
+     * @return BelongsToMany<Precinct,User,Pivot>
+     */
+    public function precincts(): BelongsToMany
+    {
+        return $this->belongsToMany(Precinct::class);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Solo los usuarios con rol super_admin pueden acceder al panel de Filament
+        if ($panel->getId() === 'admin') {
+            return $this->hasRole('super_admin');
+        }
+
+        // Por defecto: no tiene acceso a ningún otro panel
+        return false;
     }
 }
