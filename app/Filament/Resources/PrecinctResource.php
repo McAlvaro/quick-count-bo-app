@@ -20,6 +20,9 @@ class PrecinctResource extends Resource
 {
     protected static ?string $model = Precinct::class;
 
+    protected static ?string $modelLabel = 'Recinto';
+    protected static ?string $pluralModelLabel = 'Recintos';
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form

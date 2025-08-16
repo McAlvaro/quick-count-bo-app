@@ -8,7 +8,7 @@ use Filament\Pages\Page;
 
 class VotesDashboard extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-chart-pie';
 
     protected static string $view = 'filament.pages.votes-dashboard';
 

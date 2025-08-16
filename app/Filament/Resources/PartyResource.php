@@ -26,6 +26,10 @@ class PartyResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $modelLabel = 'Partido';
+    protected static ?string $pluralModelLabel = 'Partidos';
+
+
     public static function form(Form $form): Form
     {
         return $form

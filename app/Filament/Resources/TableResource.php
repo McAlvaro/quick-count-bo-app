@@ -28,6 +28,10 @@ class TableResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $modelLabel = 'Voto';
+    protected static ?string $pluralModelLabel = 'Votos';
+
+
     public static function form(Form $form): Form
     {
         $parties = Party::orderBy('name')->get();
