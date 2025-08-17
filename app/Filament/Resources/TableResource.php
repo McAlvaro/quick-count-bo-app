@@ -70,6 +70,10 @@ class TableResource extends Resource
                     ->searchable()
                     ->required(),
 
+                TextInput::make('total_eligible')
+                    ->numeric()
+                    ->label(label: 'Total Habilitados'),
+
                 /* Forms\Components\Fieldset::make('Votes by Candidate') */
                 /*     ->schema($voteFields) */
                 /*     ->columns(2), */
@@ -145,6 +149,10 @@ class TableResource extends Resource
                 ->sortable(false)
                 ->extraAttributes(['class' => 'text-left']);
         }
+
+        $columns[] = TextColumn::make('total_eligible')
+            ->label(label: 'Total Habilitados')
+            ->alignRight();
 
         return $table
             ->columns($columns)
