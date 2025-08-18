@@ -2,9 +2,9 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Party;
 use App\Models\Precinct;
 use App\Models\Vote;
+use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -58,6 +58,17 @@ class VotesChart extends ChartWidget
 
         Log::debug(json_encode($votesPerParty));
 
+        $values = $votesPerParty->pluck('total')->map(fn($v) => (int) $v)->toArray();
+        $labels = $votesPerParty->pluck('name')->toArray();
+
+        $total = array_sum($values);
+
+        $labelsWithPct = array_map(function ($label, $value) use ($total) {
+            $pct = $total > 0 ? round(($value / $total) * 100, 1) : 0;
+            // ejemplo: "Partido X (123 — 45.6%)"
+            return sprintf('%s (%.1f%%)', $label, $pct);
+        }, $labels, $values);
+
         return [
             'datasets' => [
                 [
@@ -71,13 +82,13 @@ class VotesChart extends ChartWidget
                         '#06138f',
                         '#c46a02',
                         '#197347',
-                        '#808080',
                         '#ffffff',
+                        '#808080',
                         // Agrega más colores si tienes más partidos
                     ],
                 ],
             ],
-            'labels' => $votesPerParty->pluck('name')->toArray(),
+            'labels' => $labelsWithPct,
         ];
     }
 
@@ -94,7 +105,7 @@ class VotesChart extends ChartWidget
                     'position' => 'bottom',
                 ],
             ],
-            'maintainAspectRatio' => false,
+            'maintainAspectRatio' => true,
             'height' => 600,
             'scales' => [
                 'x' => [
@@ -109,7 +120,7 @@ class VotesChart extends ChartWidget
                         'display' => false // Oculta la grilla del eje Y
                     ]
                 ]
-            ]
+            ],
 
         ];
     }

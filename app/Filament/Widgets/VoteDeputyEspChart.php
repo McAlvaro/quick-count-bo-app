@@ -14,6 +14,8 @@ class VoteDeputyEspChart extends ChartWidget
 
     public ?string $precinctId = null;
 
+    protected static ?string $maxHeight = '600px';
+
     protected function getFilters(): array
     {
         $precincts = Precinct::query()
@@ -51,6 +53,17 @@ class VoteDeputyEspChart extends ChartWidget
 
         Log::debug(json_encode($votesPerParty));
 
+        $values = $votesPerParty->pluck('total')->map(fn($v) => (int) $v)->toArray();
+        $labels = $votesPerParty->pluck('name')->toArray();
+
+        $total = array_sum($values);
+
+        $labelsWithPct = array_map(function ($label, $value) use ($total) {
+            $pct = $total > 0 ? round(($value / $total) * 100, 1) : 0;
+            // ejemplo: "Partido X (123 — 45.6%)"
+            return sprintf('%s (%.1f%%)', $label, $pct);
+        }, $labels, $values);
+
         return [
             'datasets' => [
                 [
@@ -64,13 +77,13 @@ class VoteDeputyEspChart extends ChartWidget
                         '#06138f',
                         '#c46a02',
                         '#197347',
-                        '#808080',
                         '#ffffff',
+                        '#808080',
                         // Agrega más colores si tienes más partidos
                     ],
                 ],
             ],
-            'labels' => $votesPerParty->pluck('name')->toArray(),
+            'labels' => $labelsWithPct,
         ];
     }
 
@@ -87,7 +100,7 @@ class VoteDeputyEspChart extends ChartWidget
                     'position' => 'bottom',
                 ],
             ],
-            'maintainAspectRatio' => false,
+            'maintainAspectRatio' => true,
             'height' => 600,
             'scales' => [
                 'x' => [
