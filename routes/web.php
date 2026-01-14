@@ -19,4 +19,8 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 });
 
+use App\Livewire\ControlPanel;
+
+Route::get('/control-panel', ControlPanel::class)->name('control-panel');
+
 require __DIR__.'/auth.php';
