@@ -8,18 +8,13 @@ use Filament\Support\RawJs;
 use Illuminate\Support\Facades\DB;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
-class VotesDeputyApexChart extends ApexChartWidget
+class GovernorVotesChart extends ApexChartWidget
 {
-    protected static ?string $chartId = 'votesDeputyApexChart';
+    protected static ?string $chartId = 'governorVotesChart';
 
-    public static function canView(): bool
-    {
-        return false;
-    }
+    protected static ?string $heading = 'Estadísticas - GOBERNADOR';
 
-    protected static ?string $heading = 'Estadísticas - DIPUTADO';
-
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 2;
 
     protected int|string|array $columnSpan = 'full';
 
@@ -41,7 +36,7 @@ class VotesDeputyApexChart extends ApexChartWidget
             ->join('parties', 'candidates.party_id', '=', 'parties.id')
             ->join('tables', 'votes.table_id', '=', 'tables.id')
             ->join('precincts', 'tables.precinct_id', '=', 'precincts.id')
-            ->where('candidates.type', 'DIPUTADO');
+            ->where('candidates.type', 'GOBERNADOR');
 
         if ($this->filter !== 'all' && $this->filter !== null) {
             $votesQuery->where('precincts.id', $this->filter);

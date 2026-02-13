@@ -3,12 +3,10 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TableResource\Pages;
-use App\Filament\Resources\TableResource\RelationManagers;
 use App\Models\Party;
 use App\Models\Precinct;
 use App\Models\Table as TableModel;
 use Filament\Forms;
-use Filament\Forms\Components\HasManyRepeater;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -17,10 +15,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use function Livewire\Volt\layout;
 
 class TableResource extends Resource
 {
@@ -29,8 +23,8 @@ class TableResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $modelLabel = 'Voto';
-    protected static ?string $pluralModelLabel = 'Votos';
 
+    protected static ?string $pluralModelLabel = 'Votos';
 
     public static function form(Form $form): Form
     {
@@ -40,12 +34,13 @@ class TableResource extends Resource
 
         foreach ($parties as $party) {
             $voteFields[] = Forms\Components\TextInput::make("candidate_{$party->id}")
-                ->label($party->name . ' - ' . ucfirst(strtolower($party->name)))
+                ->label($party->name.' - '.ucfirst(strtolower($party->name)))
                 ->numeric()
                 ->minValue(0)
                 ->default(0)
                 ->required();
         }
+
         return $form
             ->schema([
                 Forms\Components\Select::make('precinct_id')
@@ -54,15 +49,16 @@ class TableResource extends Resource
                     ->searchable()
                     ->required()
                     ->reactive()
-                    ->afterStateUpdated(fn(callable $set) => $set('table_id', null)),
+                    ->afterStateUpdated(fn (callable $set) => $set('table_id', null)),
 
                 Forms\Components\Select::make('id')
                     ->label('Table Number')
                     ->options(function (callable $get) {
                         $precinctId = $get('precinct_id');
-                        if (!$precinctId) {
+                        if (! $precinctId) {
                             return [];
                         }
+
                         return TableModel::where('precinct_id', $precinctId)
                             ->orderBy('number')
                             ->pluck('number', 'id');
@@ -87,9 +83,9 @@ class TableResource extends Resource
                             ->relationship(
                                 'candidate',
                                 'name',
-                                fn($query) => $query->with('party') // Eager loading para evitar N+1
+                                fn ($query) => $query->with('party') // Eager loading para evitar N+1
                             )
-                            ->getOptionLabelFromRecordUsing(fn($record) => "{$record->type} - {$record->party->acronym}")
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->type} - {$record->party->acronym}")
                             ->label('Candidato')
                             ->preload()
                             ->searchable(),
@@ -97,7 +93,7 @@ class TableResource extends Resource
                         TextInput::make(name: 'quantity')
                             ->numeric()
                             ->required()
-                            ->label(label: 'Numero de Votos')
+                            ->label(label: 'Numero de Votos'),
 
                     ])->columnSpan(2),
 
@@ -125,6 +121,7 @@ class TableResource extends Resource
             $columns[] = TextColumn::make("party_{$party->id}_votes")
                 ->label($party->acronym)
                 ->getStateUsing(function (TableModel $record) use ($party) {
+                    /*
                     $votesPresident = $record->votes
                         ->filter(fn($vote) => $vote->candidate
                             && $vote->candidate->party_id === $party->id
@@ -144,6 +141,21 @@ class TableResource extends Resource
                         ->sum('quantity');
 
                     return "Presidente: {$votesPresident}<br>Diputado: {$votesDeputy} <br>Diputado Especial: {$votesDeputyEsp}";
+                    */
+
+                    $votesGovernor = $record->votes
+                        ->filter(fn ($vote) => $vote->candidate
+                            && $vote->candidate->party_id === $party->id
+                            && strtoupper($vote->candidate->type) === 'GOBERNADOR')
+                        ->sum('quantity');
+
+                    $votesMayor = $record->votes
+                        ->filter(fn ($vote) => $vote->candidate
+                            && $vote->candidate->party_id === $party->id
+                            && strtoupper($vote->candidate->type) === 'ALCALDE')
+                        ->sum('quantity');
+
+                    return "Gobernador: {$votesGovernor}<br>Alcalde: {$votesMayor}";
                 })
                 ->html() // Importante para que el <br> funcione
                 ->sortable(false)

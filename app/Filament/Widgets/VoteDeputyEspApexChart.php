@@ -4,13 +4,18 @@ namespace App\Filament\Widgets;
 
 use App\Models\Precinct;
 use App\Models\Vote;
-use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 use Filament\Support\RawJs;
 use Illuminate\Support\Facades\DB;
+use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class VoteDeputyEspApexChart extends ApexChartWidget
 {
     protected static ?string $chartId = 'voteDeputyEspApexChart';
+
+    public static function canView(): bool
+    {
+        return false;
+    }
 
     protected static ?string $heading = 'Estadísticas - DIPUTADO ESPECIAL';
 
@@ -48,8 +53,8 @@ class VoteDeputyEspApexChart extends ApexChartWidget
             ->get();
 
         $labels = $votesPerParty->pluck('name')->toArray();
-        $series = $votesPerParty->pluck('total')->map(fn($v) => (int) $v)->toArray();
-        $colors = $votesPerParty->pluck('color')->map(fn($c) => $c ?? '#808080')->toArray();
+        $series = $votesPerParty->pluck('total')->map(fn ($v) => (int) $v)->toArray();
+        $colors = $votesPerParty->pluck('color')->map(fn ($c) => $c ?? '#808080')->toArray();
 
         return [
             'chart' => [
@@ -81,7 +86,7 @@ class VoteDeputyEspApexChart extends ApexChartWidget
 
     protected function extraJsOptions(): ?RawJs
     {
-        return RawJs::make(<<<JS
+        return RawJs::make(<<<'JS'
         {
             plotOptions: {
                 pie: {

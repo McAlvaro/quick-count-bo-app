@@ -88,19 +88,19 @@
 
         <!-- RESULTS GRID -->
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            <!-- COLUMN 1: PRESIDENCIALES -->
+            <!-- COLUMN 1: GOBERNACION -->
             <div class="flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden">
                 <div class="p-6 border-b border-border-light dark:border-border-dark flex justify-between items-center">
                     <h3 class="text-xl font-bold flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">person</span>
-                        Presidenciales
+                        Gobernación
                     </h3>
                 </div>
                 <div class="p-6 flex flex-col gap-8">
                     <div class="flex flex-col gap-4">
                         <h4 class="text-xs font-bold text-text-secondary uppercase tracking-widest border-b border-border-light dark:border-border-dark pb-2">Resultados</h4>
 
-                        @foreach($presidentResults as $result)
+                        @foreach($governorResults as $result)
                         <div class="flex flex-col gap-2">
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center gap-3">
@@ -127,26 +127,26 @@
                         </div>
                         @endforeach
 
-                        @if($presidentResults->isEmpty())
+                        @if($governorResults->isEmpty())
                             <p class="text-center text-text-secondary py-4">No hay datos registrados aún.</p>
                         @endif
                     </div>
                 </div>
             </div>
 
-            <!-- COLUMN 2: DIPUTADOS -->
+            <!-- COLUMN 2: ALCALDIA -->
             <div class="flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden">
                 <div class="p-6 border-b border-border-light dark:border-border-dark flex justify-between items-center">
                     <h3 class="text-xl font-bold flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">groups</span>
-                        Diputados
+                        Alcaldía
                     </h3>
                 </div>
                 <div class="p-6 flex flex-col gap-8">
                     <div class="flex flex-col gap-4">
                         <h4 class="text-xs font-bold text-text-secondary uppercase tracking-widest border-b border-border-light dark:border-border-dark pb-2">Resultados por Partido</h4>
 
-                        @foreach($deputyResults as $result)
+                        @foreach($mayorResults as $result)
                         <div class="flex flex-col gap-2">
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center gap-3">
@@ -169,7 +169,7 @@
                         </div>
                         @endforeach
 
-                        @if($deputyResults->isEmpty())
+                        @if($mayorResults->isEmpty())
                             <p class="text-center text-text-secondary py-4">No hay datos registrados aún.</p>
                         @endif
                     </div>

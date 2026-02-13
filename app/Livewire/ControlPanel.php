@@ -2,15 +2,16 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Models\Precinct;
-use App\Models\Vote;
 use App\Models\Table;
+use App\Models\Vote;
 use Illuminate\Support\Facades\DB;
+use Livewire\Component;
 
 class ControlPanel extends Component
 {
     public $precinctFilter = 'all';
+
     public $tableFilter = 'all';
 
     public function getPrecinctsProperty()
@@ -23,6 +24,7 @@ class ControlPanel extends Component
         if ($this->precinctFilter === 'all') {
             return [];
         }
+
         return Table::where('precinct_id', $this->precinctFilter)->pluck('number', 'id');
     }
 
@@ -40,28 +42,27 @@ class ControlPanel extends Component
     {
         // Base Query Logic
         $tableQuery = Table::query();
-        
+
         if ($this->precinctFilter !== 'all') {
             $tableQuery->where('precinct_id', $this->precinctFilter);
         }
-        
+
         if ($this->tableFilter !== 'all') {
             $tableQuery->where('id', $this->tableFilter);
         }
 
-        $totalTablesCount = $tableQuery->count(); 
-        
-        $totalSystemTables = Table::count(); 
+        $totalTablesCount = $tableQuery->count();
+
+        $totalSystemTables = Table::count();
         $filteredTablesIds = $tableQuery->pluck('id');
-        
+
         $scrutinizedTables = Table::whereIn('id', $filteredTablesIds)
             ->has('votes')
             ->count();
-            
+
         $scopeTotalTables = ($this->precinctFilter !== 'all') ? Table::where('precinct_id', $this->precinctFilter)->count() : $totalSystemTables;
         $scopeScrutinized = Table::whereIn('id', $filteredTablesIds)->has('votes')->count();
         $scopePct = $scopeTotalTables > 0 ? ($scopeScrutinized / $scopeTotalTables) * 100 : 0;
-
 
         // 2. Votos Totales
         $validVotes = Vote::whereIn('table_id', $filteredTablesIds)->sum('quantity');
@@ -73,12 +74,13 @@ class ControlPanel extends Component
         $eligibleVoters = Table::whereIn('id', $filteredTablesIds)->sum('total_eligible') ?? 0;
         $abstentionPct = $eligibleVoters > 0 ? (($eligibleVoters - $totalVotes) / $eligibleVoters) * 100 : 0;
 
-
         // 4. Presidential Results
-        $presidentResults = $this->getResultsByType('PRESIDENTE', $filteredTablesIds);
+        /* $presidentResults = $this->getResultsByType('PRESIDENTE', $filteredTablesIds); */
+        $governorResults = $this->getResultsByType('GOBERNADOR', $filteredTablesIds);
 
         // 5. Deputy Results
-        $deputyResults = $this->getResultsByType('DIPUTADO', $filteredTablesIds);
+        /* $deputyResults = $this->getResultsByType('DIPUTADO', $filteredTablesIds); */
+        $mayorResults = $this->getResultsByType('ALCALDE', $filteredTablesIds);
 
         return [
             'scopeScrutinized' => $scopeScrutinized,
@@ -86,8 +88,10 @@ class ControlPanel extends Component
             'scopePct' => $scopePct,
             'totalVotes' => $totalVotes,
             'abstentionPct' => $abstentionPct,
-            'presidentResults' => $presidentResults,
-            'deputyResults' => $deputyResults,
+            /* 'presidentResults' => $presidentResults, */
+            'governorResults' => $governorResults,
+            /* 'deputyResults' => $deputyResults, */
+            'mayorResults' => $mayorResults,
             'lastUpdate' => now()->format('H:i A'),
         ];
     }
@@ -116,6 +120,7 @@ class ControlPanel extends Component
 
         return $query->map(function ($item) use ($totalValid) {
             $item->percentage = $totalValid > 0 ? ($item->votes / $totalValid) * 100 : 0;
+
             return $item;
         });
     }

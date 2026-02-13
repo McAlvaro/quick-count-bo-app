@@ -4,13 +4,18 @@ namespace App\Filament\Widgets;
 
 use App\Models\Precinct;
 use App\Models\Vote;
-use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 use Filament\Support\RawJs;
 use Illuminate\Support\Facades\DB;
+use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class VotesBarChart extends ApexChartWidget
 {
     protected static ?string $chartId = 'votesBarChart';
+
+    public static function canView(): bool
+    {
+        return false;
+    }
 
     protected static ?string $heading = 'Estadísticas - PRESIDENTE (Barras)';
 
@@ -48,14 +53,15 @@ class VotesBarChart extends ApexChartWidget
             ->get();
 
         $labels = $votesPerParty->pluck('name')->toArray();
-        $data = $votesPerParty->pluck('total')->map(fn($v) => (int) $v)->toArray();
-        $colors = $votesPerParty->pluck('color')->map(fn($c) => $c ?? '#808080')->toArray();
+        $data = $votesPerParty->pluck('total')->map(fn ($v) => (int) $v)->toArray();
+        $colors = $votesPerParty->pluck('color')->map(fn ($c) => $c ?? '#808080')->toArray();
 
         $total = array_sum($data);
 
         $labelsWithPct = array_map(function ($label, $value) use ($total) {
-             $pct = $total > 0 ? round(($value / $total) * 100, 1) : 0;
-             return sprintf('%s (%.1f%%)', $label, $pct);
+            $pct = $total > 0 ? round(($value / $total) * 100, 1) : 0;
+
+            return sprintf('%s (%.1f%%)', $label, $pct);
         }, $labels, $data);
 
         return [
@@ -110,7 +116,7 @@ class VotesBarChart extends ApexChartWidget
                 'offsetY' => -25,
                 'style' => [
                     'fontSize' => '12px',
-                    'colors' => ["#304758"]
+                    'colors' => ['#304758'],
                 ],
             ],
             'legend' => [
@@ -135,7 +141,7 @@ class VotesBarChart extends ApexChartWidget
         }
 
         $total = $votesQuery->sum('quantity');
-        
+
         // Ensure total is at least 1 to avoid division by zero in JS
         $total = $total > 0 ? $total : 1;
 
