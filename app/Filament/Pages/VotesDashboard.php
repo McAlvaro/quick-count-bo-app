@@ -22,28 +22,26 @@ class VotesDashboard extends Page
     public static function getWidgets(): array
     {
         return [
+            GovernorVotesChart::class,
+            MayorVotesChart::class,
             TurnoutChart::class,
             /* VotesApexChart::class, */
             /* VotesBarChart::class, */
             /* VotesDeputyApexChart::class, */
             /* VoteDeputyEspApexChart::class, */
-
-            GovernorVotesChart::class,
-            MayorVotesChart::class,
         ];
     }
 
     public function getVisibleWidgets(): array
     {
         return [
+            GovernorVotesChart::class,
+            MayorVotesChart::class,
             TurnoutChart::class,
             /* VotesApexChart::class, */
             /* VotesBarChart::class, */
             /* VotesDeputyApexChart::class, */
             /* VoteDeputyEspApexChart::class, */
-
-            GovernorVotesChart::class,
-            MayorVotesChart::class,
         ];
     }
 }
