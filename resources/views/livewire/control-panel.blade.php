@@ -112,8 +112,8 @@
                                         </div>
                                     @endif
                                     <div class="flex flex-col">
-                                        <span class="font-bold text-base leading-tight">{{ $result->candidate_name }}</span>
-                                        <span class="text-xs text-text-secondary">{{ $result->party_name }}</span>
+                                        <span class="font-bold text-base leading-tight">{{ $result->party_name }}</span>
+                                        <span class="text-xs text-text-secondary">{{ $result->candidate_name }}</span>
                                     </div>
                                 </div>
                                 <div class="text-right">
@@ -155,7 +155,7 @@
                                     </div>
                                     <div class="flex flex-col">
                                         <span class="font-bold text-base leading-tight">{{ $result->party_name }}</span>
-                                        <span class="text-xs text-text-secondary">Lista {{ $result->id ?? '' }}</span>
+                                        <span class="text-xs text-text-secondary">{{ $result->candidate_name }}</span>
                                     </div>
                                 </div>
                                 <div class="text-right">

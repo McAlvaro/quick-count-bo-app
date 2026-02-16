@@ -6,6 +6,7 @@ use App\Models\Precinct;
 use App\Models\Table;
 use App\Models\Vote;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class ControlPanel extends Component
@@ -118,10 +119,50 @@ class ControlPanel extends Component
 
         $totalValid = $query->sum('votes');
 
-        return $query->map(function ($item) use ($totalValid) {
+        $results = $query->map(function ($item) use ($totalValid) {
             $item->percentage = $totalValid > 0 ? ($item->votes / $totalValid) * 100 : 0;
 
             return $item;
         });
+
+        return $results
+            ->sort(function ($a, $b) {
+                $priorityA = $this->getResultPriority($a);
+                $priorityB = $this->getResultPriority($b);
+
+                if ($priorityA === $priorityB) {
+                    return $b->votes <=> $a->votes;
+                }
+
+                return $priorityA <=> $priorityB;
+            })
+            ->values();
+    }
+
+    private function getResultPriority(object $item): int
+    {
+        $category = $this->determineResultCategory($item);
+
+        return match ($category) {
+            null => 0,
+            'blanco' => 1,
+            'nulo' => 2,
+        };
+    }
+
+    private function determineResultCategory(object $item): ?string
+    {
+        $name = Str::lower($item->candidate_name ?? '');
+        $party = Str::lower($item->party_name ?? '');
+
+        if (Str::contains($name, 'nulo') || Str::contains($party, 'nulo')) {
+            return 'nulo';
+        }
+
+        if (Str::contains($name, 'blanco') || Str::contains($party, 'blanco')) {
+            return 'blanco';
+        }
+
+        return null;
     }
 }
