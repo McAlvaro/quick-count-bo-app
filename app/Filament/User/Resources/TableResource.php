@@ -56,10 +56,26 @@ class TableResource extends Resource
                     ->searchable()
                     ->required(),
 
+                Forms\Components\TextInput::make('total_eligible')
+                    ->label('Total Habilitados')
+                    ->disabled()
+                    ->dehydrated(false) // No guardar este campo, solo lectura visual y para validación
+                    ->numeric(),
+
                 Repeater::make('votes')
                     ->grid(2)
                     ->relationship(name: 'votes')
                     ->label(label: 'Votos, por Candidato')
+                    ->rules([
+                        fn (Forms\Get $get) => function (string $attribute, $value, \Closure $fail) use ($get) {
+                            $totalEligible = $get('total_eligible');
+                            $totalVotes = collect($value)->sum('quantity');
+
+                            if ($totalEligible > 0 && $totalVotes > $totalEligible) {
+                                $fail("La suma de votos ({$totalVotes}) excede el total de habilitados ({$totalEligible}).");
+                            }
+                        },
+                    ])
                     ->schema([
                         Forms\Components\Placeholder::make('candidate_label')
                             ->label('')
