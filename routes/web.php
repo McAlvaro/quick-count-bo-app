@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
 Route::get('/', function () {
+    if (auth()->check() && auth()->user()->hasRole('super_admin')) {
+        return redirect()->intended('/admin');
+    }
+
     return redirect()->intended('/votos');
 })->name('home');
 
