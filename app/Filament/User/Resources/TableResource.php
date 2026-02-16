@@ -3,21 +3,18 @@
 namespace App\Filament\User\Resources;
 
 use App\Filament\User\Resources\TableResource\Pages;
-use App\Filament\User\Resources\TableResource\RelationManagers;
-use App\Models\Party;
 use App\Models\Precinct;
 use App\Models\Table as TableModel;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
 class TableResource extends Resource
@@ -27,6 +24,7 @@ class TableResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $modelLabel = 'Voto';
+
     protected static ?string $pluralModelLabel = 'Votos';
 
     public static function form(Form $form): Form
@@ -40,15 +38,16 @@ class TableResource extends Resource
                     ->required()
                     ->reactive()
                     ->disabled()
-                    ->afterStateUpdated(fn(callable $set) => $set('table_id', null)),
+                    ->afterStateUpdated(fn (callable $set) => $set('table_id', null)),
 
                 Forms\Components\Select::make('id')
                     ->label('Numero de Mesa')
                     ->options(function (callable $get) {
                         $precinctId = $get('precinct_id');
-                        if (!$precinctId) {
+                        if (! $precinctId) {
                             return [];
                         }
+
                         return TableModel::where('precinct_id', $precinctId)
                             ->orderBy('number')
                             ->pluck('number', 'id');
@@ -64,15 +63,15 @@ class TableResource extends Resource
                     ->schema([
                         Forms\Components\Placeholder::make('candidate_label')
                             ->label('')
-                            ->content(fn($get, $record) => "{$record->candidate->type} - {$record->candidate->party->acronym}"),
+                            ->content(fn ($get, $record) => "{$record->candidate->type} - {$record->candidate->party->acronym}"),
 
                         Select::make('candidate_id')
                             ->relationship(
                                 'candidate',
                                 'name',
-                                fn($query) => $query->with('party') // Eager loading para evitar N+1
+                                fn ($query) => $query->with('party') // Eager loading para evitar N+1
                             )
-                            ->getOptionLabelFromRecordUsing(fn($record) => "{$record->type} - {$record->party->acronym}")
+                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->type} - {$record->party->acronym}")
                             ->preload()
                             ->label('')
                             ->hidden()
@@ -82,7 +81,7 @@ class TableResource extends Resource
                         TextInput::make(name: 'quantity')
                             ->numeric()
                             ->required()
-                            ->label(label: 'Numero de Votos')
+                            ->label(label: 'Numero de Votos'),
 
                     ])
                     ->deletable(false)
@@ -97,13 +96,13 @@ class TableResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('precinct.name')
-                    ->label('Precinct')
+                    ->label('Recinto')
                     ->size(size: 16)
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('number')
-                    ->label('Table Number')
+                    ->label('Número de Mesa')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('registered_at')
@@ -118,7 +117,7 @@ class TableResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    /* Tables\Actions\DeleteBulkAction::make(), */]),
+                /* Tables\Actions\DeleteBulkAction::make(), */]),
             ]);
     }
 
