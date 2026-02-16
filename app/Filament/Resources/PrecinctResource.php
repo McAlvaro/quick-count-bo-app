@@ -3,9 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PrecinctResource\Pages;
-use App\Filament\Resources\PrecinctResource\RelationManagers;
 use App\Models\Precinct;
-use Filament\Forms;
 use Filament\Forms\Components\HasManyRepeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -13,14 +11,13 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PrecinctResource extends Resource
 {
     protected static ?string $model = Precinct::class;
 
     protected static ?string $modelLabel = 'Recinto';
+
     protected static ?string $pluralModelLabel = 'Recintos';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -39,9 +36,14 @@ class PrecinctResource extends Resource
                         TextInput::make(name: 'number')
                             ->numeric()
                             ->required()
-                            ->label(label: 'Numero de Mesa')
+                            ->label(label: 'Numero de Mesa'),
+                        TextInput::make(name: 'total_eligible')
+                            ->numeric()
+                            ->minValue(value: 0)
+                            ->label(label: 'Total Habilitados')
+                            ->placeholder('Ej. 350'),
                     ])
-                    ->collapsible()
+                    ->collapsible(),
             ]);
     }
 
