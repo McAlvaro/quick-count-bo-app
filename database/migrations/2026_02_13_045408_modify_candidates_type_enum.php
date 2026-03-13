@@ -16,8 +16,8 @@ return new class extends Migration
             DB::statement("ALTER TABLE candidates MODIFY COLUMN type ENUM('PRESIDENTE', 'DIPUTADO', 'DIPUTADO_ESPECIAL', 'GOBERNADOR', 'ALCALDE')");
         } elseif ($driver === 'pgsql') {
             // PostgreSQL: drop constraint if exists, then add new one
+            DB::statement('ALTER TABLE candidates DROP CONSTRAINT IF EXISTS candidates_type_check');
             DB::statement('ALTER TABLE candidates ALTER COLUMN type TYPE VARCHAR(50)');
-            DB::statement('ALTER TABLE candidates ALTER COLUMN type DROP DEFAULT');
             DB::statement("ALTER TABLE candidates ADD CONSTRAINT candidates_type_check CHECK (type IN ('PRESIDENTE', 'DIPUTADO', 'DIPUTADO_ESPECIAL', 'GOBERNADOR', 'ALCALDE'))");
         }
     }
