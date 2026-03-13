@@ -3,9 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PartyResource\Pages;
-use App\Filament\Resources\PartyResource\RelationManagers;
 use App\Models\Party;
-use Filament\Forms;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -14,11 +13,10 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PartyResource extends Resource
 {
@@ -27,8 +25,8 @@ class PartyResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $modelLabel = 'Partido';
-    protected static ?string $pluralModelLabel = 'Partidos';
 
+    protected static ?string $pluralModelLabel = 'Partidos';
 
     public static function form(Form $form): Form
     {
@@ -36,6 +34,9 @@ class PartyResource extends Resource
             ->schema([
                 TextInput::make(name: 'name')->required()->label(label: 'Nombre de Partido'),
                 TextInput::make(name: 'acronym')->required()->label(label: 'Sigla'),
+                ColorPicker::make('color')
+                    ->label('Color del Partido')
+                    ->required(),
                 FileUpload::make(name: 'logo_path')->nullable()
                     ->image()
                     ->directory('logos'),
@@ -46,17 +47,25 @@ class PartyResource extends Resource
                         TextInput::make('name')
                             ->label('Nombre de Candidato')
                             ->required(),
+                        FileUpload::make('photo_path')
+                            ->label('Foto del Candidato')
+                            ->image()
+                            ->avatar()
+                            ->directory('candidates')
+                            ->columnSpan(1),
                         Select::make('type')
                             ->label('Tipo de Candidato')
                             ->required()
                             ->options([
-                                'PRESIDENTE' => 'PRESIDENTE',
-                                'DIPUTADO'   => 'DIPUTADO',
-                                'DIPUTADO_ESPECIAL' => 'DIPUTADO_ESPECIAL',
-                            ])
+                                // 'PRESIDENTE' => 'PRESIDENTE',
+                                // 'DIPUTADO'   => 'DIPUTADO',
+                                // 'DIPUTADO_ESPECIAL' => 'DIPUTADO_ESPECIAL',
+                                'GOBERNADOR' => 'GOBERNADOR',
+                                'ALCALDE' => 'ALCALDE',
+                            ]),
                     ])
                     ->createItemButtonLabel('Add Candidate')
-                    ->columns(2)
+                    ->columns(2),
             ]);
     }
 
@@ -68,6 +77,8 @@ class PartyResource extends Resource
                     ->label(label: 'Nombre'),
                 TextColumn::make(name: 'acronym')
                     ->label(label: 'Sigla'),
+                ColorColumn::make('color')
+                    ->label('Color'),
                 ImageColumn::make(name: 'logo_path')
                     ->label(label: 'Logo')->square()->height(height: 50),
             ])
@@ -76,7 +87,7 @@ class PartyResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                DeleteAction::make()
+                DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

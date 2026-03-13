@@ -55,6 +55,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentShieldPlugin::make(),
+                \Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin::make(),
             ])
             ->authMiddleware([
                 Authenticate::class,

@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
 Route::get('/', function () {
+    if (auth()->check() && auth()->user()->hasRole('super_admin')) {
+        return redirect()->intended('/admin');
+    }
+
     return redirect()->intended('/votos');
 })->name('home');
 
@@ -18,5 +22,9 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/password', 'settings.password')->name('settings.password');
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 });
+
+use App\Livewire\ControlPanel;
+
+Route::get('/control-panel', ControlPanel::class)->name('control-panel');
 
 require __DIR__.'/auth.php';
