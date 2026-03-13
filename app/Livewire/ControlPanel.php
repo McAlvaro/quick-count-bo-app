@@ -65,11 +65,8 @@ class ControlPanel extends Component
         $scopeScrutinized = Table::whereIn('id', $filteredTablesIds)->has('votes')->count();
         $scopePct = $scopeTotalTables > 0 ? ($scopeScrutinized / $scopeTotalTables) * 100 : 0;
 
-        // 2. Votos Totales
-        $validVotes = Vote::whereIn('table_id', $filteredTablesIds)->sum('quantity');
-        $nullVotes = Table::whereIn('id', $filteredTablesIds)->sum('null_votes');
-        $blankVotes = Table::whereIn('id', $filteredTablesIds)->sum('blank_votes');
-        $totalVotes = $validVotes + $nullVotes + $blankVotes;
+        // 2. Votos Totales (incluye candidatos especiales de blancos y nulos)
+        $totalVotes = Vote::whereIn('table_id', $filteredTablesIds)->sum('quantity');
 
         // 3. Abstencion / Participation
         $eligibleVoters = Table::whereIn('id', $filteredTablesIds)->sum('total_eligible') ?? 0;
