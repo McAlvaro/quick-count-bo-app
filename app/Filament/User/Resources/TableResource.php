@@ -3,6 +3,7 @@
 namespace App\Filament\User\Resources;
 
 use App\Filament\User\Resources\TableResource\Pages;
+use App\Models\Candidate;
 use App\Models\Precinct;
 use App\Models\Table as TableModel;
 use Filament\Forms;
@@ -69,10 +70,35 @@ class TableResource extends Resource
                     ->rules([
                         fn (Forms\Get $get) => function (string $attribute, $value, \Closure $fail) use ($get) {
                             $totalEligible = $get('total_eligible');
-                            $totalVotes = collect($value)->sum('quantity');
 
-                            if ($totalEligible > 0 && $totalVotes > $totalEligible) {
-                                $fail("La suma de votos ({$totalVotes}) excede el total de habilitados ({$totalEligible}).");
+                            if ($totalEligible === null) {
+                                return;
+                            }
+
+                            $candidateIds = collect($value)->pluck('candidate_id')->filter()->toArray();
+                            if (empty($candidateIds)) {
+                                return;
+                            }
+
+                            $candidateTypesMap = Candidate::query()->whereIn('id', $candidateIds)
+                                ->pluck('type', 'id')
+                                ->toArray();
+
+                            $candidateTypes = array_unique(array_values($candidateTypesMap));
+
+                            foreach ($candidateTypes as $type) {
+                                $votesForType = 0;
+                                foreach ($value as $vote) {
+                                    $candidateId = $vote['candidate_id'] ?? null;
+                                    if ($candidateId && ($candidateTypesMap[$candidateId] ?? null) === $type) {
+                                        $votesForType += (int) ($vote['quantity'] ?? 0);
+                                    }
+                                }
+                                \Log::debug("Votes for {$type}: {$votesForType}  - Total: {$totalEligible}");
+
+                                if ($totalEligible > 0 && $votesForType > $totalEligible) {
+                                    $fail("{$type}: La suma de votos ({$votesForType}) excede el total de habilitados ({$totalEligible}).");
+                                }
                             }
                         },
                     ])
