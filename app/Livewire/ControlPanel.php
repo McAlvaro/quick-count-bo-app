@@ -68,9 +68,9 @@ class ControlPanel extends Component
         // 2. Votos Totales (incluye candidatos especiales de blancos y nulos)
         $totalVotes = Vote::whereIn('table_id', $filteredTablesIds)->sum('quantity');
 
-        // 3. Abstencion / Participation
+        // 3. Abstencion
         $eligibleVoters = Table::whereIn('id', $filteredTablesIds)->sum('total_eligible') ?? 0;
-        $abstentionPct = $eligibleVoters > 0 ? (($eligibleVoters - $totalVotes) / $eligibleVoters) * 100 : 0;
+        $abstention = max(0, $eligibleVoters - $totalVotes);
 
         // 4. Presidential Results
         /* $presidentResults = $this->getResultsByType('PRESIDENTE', $filteredTablesIds); */
@@ -85,7 +85,7 @@ class ControlPanel extends Component
             'scopeTotalTables' => $scopeTotalTables,
             'scopePct' => $scopePct,
             'totalVotes' => $totalVotes,
-            'abstentionPct' => $abstentionPct,
+            'abstention' => $abstention,
             /* 'presidentResults' => $presidentResults, */
             'governorResults' => $governorResults,
             /* 'deputyResults' => $deputyResults, */

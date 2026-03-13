@@ -73,15 +73,15 @@
             <div class="hidden lg:flex bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-border-light dark:border-border-dark shadow-sm flex-col justify-between gap-4">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-text-secondary text-sm font-medium mb-1">Abstención Estimada</p>
-                        <h3 class="text-3xl font-bold text-text-primary dark:text-white">{{ number_format($abstentionPct, 1) }}%</h3>
+                        <p class="text-text-secondary text-sm font-medium mb-1">Abstención</p>
+                        <h3 class="text-3xl font-bold text-text-primary dark:text-white">{{ number_format($abstention) }}</h3>
                     </div>
                     <div class="p-2 bg-orange-100 text-orange-700 rounded-lg dark:bg-orange-900/30 dark:text-orange-400">
                         <span class="material-symbols-outlined">person_off</span>
                     </div>
                 </div>
                 <p class="text-sm text-text-secondary font-medium">
-                    Proyección final
+                    Personas que no votaron
                 </p>
             </div>
         </div>
