@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PartyResource\Pages;
+use App\Models\CandidateType;
 use App\Models\Party;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
@@ -56,13 +57,7 @@ class PartyResource extends Resource
                         Select::make('type')
                             ->label('Tipo de Candidato')
                             ->required()
-                            ->options([
-                                // 'PRESIDENTE' => 'PRESIDENTE',
-                                // 'DIPUTADO'   => 'DIPUTADO',
-                                // 'DIPUTADO_ESPECIAL' => 'DIPUTADO_ESPECIAL',
-                                'GOBERNADOR' => 'GOBERNADOR',
-                                'ALCALDE' => 'ALCALDE',
-                            ]),
+                            ->options(fn () => CandidateType::pluck('name', 'name')->toArray()),
                     ])
                     ->createItemButtonLabel('Add Candidate')
                     ->columns(2),
