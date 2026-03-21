@@ -7,6 +7,7 @@ use App\Models\Candidate;
 use App\Models\Precinct;
 use App\Models\Table as TableModel;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -17,6 +18,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class TableResource extends Resource
 {
@@ -63,6 +66,20 @@ class TableResource extends Resource
                     ->dehydrated(false) // No guardar este campo, solo lectura visual y para validación
                     ->numeric(),
 
+                FileUpload::make('act_path')
+                    ->label('Acta de Escrutinio')
+                    ->image()
+                    ->directory('actas')
+                    ->nullable()
+                    ->previewable(false)
+                    ->getUploadedFileNameForStorageUsing(
+                        fn (TemporaryUploadedFile $file, $get) => $get('precinct_id')
+                            ? Str::slug(Precinct::find($get('precinct_id'))?->name ?? 'recinto')
+                            .'_mesa_'.($get('id') ?? 'new')
+                            .'.'.$file->getClientOriginalExtension()
+                            : 'acta_'.time().'.'.$file->getClientOriginalExtension()
+                    ),
+
                 Repeater::make('votes')
                     ->grid(2)
                     ->relationship(name: 'votes')
@@ -94,7 +111,7 @@ class TableResource extends Resource
                                         $votesForType += (int) ($vote['quantity'] ?? 0);
                                     }
                                 }
-                                \Log::debug("Votes for {$type}: {$votesForType}  - Total: {$totalEligible}");
+                                \Illuminate\Support\Facades\Log::debug("Votes for {$type}: {$votesForType}  - Total: {$totalEligible}");
 
                                 if ($totalEligible > 0 && $votesForType > $totalEligible) {
                                     $fail("{$type}: La suma de votos ({$votesForType}) excede el total de habilitados ({$totalEligible}).");

@@ -7,6 +7,7 @@ use App\Models\Party;
 use App\Models\Precinct;
 use App\Models\Table as TableModel;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -15,6 +16,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class TableResource extends Resource
 {
@@ -69,6 +72,20 @@ class TableResource extends Resource
                 TextInput::make('total_eligible')
                     ->numeric()
                     ->label(label: 'Total Habilitados'),
+
+                FileUpload::make('act_path')
+                    ->label('Acta de Escrutinio')
+                    ->image()
+                    ->directory('actas')
+                    ->nullable()
+                    ->previewable(false)
+                    ->getUploadedFileNameForStorageUsing(
+                        fn (TemporaryUploadedFile $file, callable $get) => $get('precinct_id')
+                            ? Str::slug(Precinct::find($get('precinct_id'))?->name ?? 'recinto')
+                            .'_mesa_'.($get('id') ?? 'new')
+                            .'.'.$file->getClientOriginalExtension()
+                            : 'acta_'.time().'.'.$file->getClientOriginalExtension()
+                    ),
 
                 /* Forms\Components\Fieldset::make('Votes by Candidate') */
                 /*     ->schema($voteFields) */
