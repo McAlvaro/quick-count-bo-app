@@ -160,11 +160,11 @@ class TableResource extends Resource
                     return "Presidente: {$votesPresident}<br>Diputado: {$votesDeputy} <br>Diputado Especial: {$votesDeputyEsp}";
                     */
 
-                    $votesGovernor = $record->votes
-                        ->filter(fn ($vote) => $vote->candidate
-                            && $vote->candidate->party_id === $party->id
-                            && strtoupper($vote->candidate->type) === 'GOBERNADOR')
-                        ->sum('quantity');
+                    /* $votesGovernor = $record->votes */
+                    /*     ->filter(fn ($vote) => $vote->candidate */
+                    /*         && $vote->candidate->party_id === $party->id */
+                    /*         && strtoupper($vote->candidate->type) === 'GOBERNADOR') */
+                    /*     ->sum('quantity'); */
 
                     $votesMayor = $record->votes
                         ->filter(fn ($vote) => $vote->candidate
@@ -172,7 +172,7 @@ class TableResource extends Resource
                             && strtoupper($vote->candidate->type) === 'ALCALDE')
                         ->sum('quantity');
 
-                    return "Gobernador: {$votesGovernor}<br>Alcalde: {$votesMayor}";
+                    return "Alcalde: {$votesMayor}";
                 })
                 ->html() // Importante para que el <br> funcione
                 ->sortable(false)
